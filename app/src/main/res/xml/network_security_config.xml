@@ -24,4 +24,14 @@
         <domain includeSubdomains="false">ipwho.is</domain>
         <domain includeSubdomains="false">ipv4.icanhazip.com</domain>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="false">ifanr.com</domain>
+        <domain includeSubdomains="false">www.ifanr.com</domain>
+        <domain includeSubdomains="false">s3.ifanr.com</domain>
+        <domain includeSubdomains="false">images.ifanr.cn</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="@raw/isrg_root_x1" />
+        </trust-anchors>
+    </domain-config>
 </network-security-config>

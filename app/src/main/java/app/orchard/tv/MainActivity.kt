@@ -872,6 +872,12 @@ class MainActivity : ComponentActivity() {
         // The key that wakes the screensaver only wakes it, silently.
         if (!vm.screensaverVisible && event.keyCode != swallowKeyUp) Sounds.onKey(event)
         // Left / right step through the films or photos and keep the screensaver up.
+        if (vm.screensaverVisible && vm.screensaverSkips.onArticleKey(event, this) { intent ->
+            if (Restricted.active) return@onArticleKey
+            startActivity(intent)
+            openedAppSinceHome = true
+            hideScreensaver()
+        }) return true
         if (vm.screensaverVisible && vm.screensaverSkips.onKey(event)) return true
         if (vm.screensaverVisible && loneLift) {
             DiagLog.i("key ${KeyEvent.keyCodeToString(event.keyCode)} lifted with no press; ending the screensaver")

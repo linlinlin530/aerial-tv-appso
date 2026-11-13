@@ -324,4 +324,14 @@
     <string name="kids_blocked">%s is not allowed here</string>
     <string name="kids_warn">%d min of TV left</string>
     <string name="kids_warn_break">A break in %d min</string>
+    <string name="ss_ifanr">ifanr</string>
+    <string name="ss_ifanr_hint">Latest ifanr articles, with covers and headlines. Refreshes in the background every 2 hours while selected; cached articles remain available offline.</string>
+    <string name="iframe_loading">Loading ifanr articles…</string>
+    <string name="iframe_unavailable">ifanr is unavailable. Waiting for articles and cover images…</string>
+    <string name="iframe_keys">← → Articles · OK to read</string>
+    <string name="iframe_confirm">Press OK again within 3 seconds to open the article</string>
+    <string name="article_loading">Loading article…</string>
+    <string name="article_keys">ifanr · Original article | ↑↓ Scroll · Back Exit</string>
+    <string name="article_failed">Unable to load article · OK Retry · Back Exit</string>
+    <string name="article_unavailable">The system cannot display this article · Back Exit</string>
 </resources>

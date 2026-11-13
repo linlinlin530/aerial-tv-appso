@@ -316,4 +316,14 @@
     <string name="kids_blocked">«%s» мұнда қолжетімсіз</string>
     <string name="kids_warn">%d мин қалды</string>
     <string name="kids_warn_break">%d минуттан кейін үзіліс</string>
+    <string name="ss_ifanr">ifanr</string>
+    <string name="ss_ifanr_hint">ifanr мақалалары мен мұқабалары. Осы экран сақтағыш таңдалғанда ғана әр 2 сағат сайын фонда жаңарады, кэш желісіз қолжетімді.</string>
+    <string name="iframe_loading">ifanr мақалалары жүктелуде…</string>
+    <string name="iframe_unavailable">Мақалалар немесе мұқабалар қолжетімсіз. Күте тұрыңыз…</string>
+    <string name="iframe_keys">← → Мақалалар · OK: оқу</string>
+    <string name="iframe_confirm">3 секунд ішінде OK түймесін қайта басыңыз</string>
+    <string name="article_loading">Мақала жүктелуде…</string>
+    <string name="article_keys">ifanr · Түпнұсқа | ↑↓ Айналдыру · Артқа Шығу</string>
+    <string name="article_failed">Жүктеу мүмкін емес · OK Қайталау · Артқа Шығу</string>
+    <string name="article_unavailable">Жүйе мақаланы көрсете алмайды · Артқа Шығу</string>
 </resources>

@@ -323,4 +323,14 @@
     <string name="kids_blocked">「%s」不在这个模式里</string>
     <string name="kids_warn">还能看 %d 分钟</string>
     <string name="kids_warn_break">%d 分钟后休息一下</string>
+    <string name="ss_ifanr">ifanr</string>
+    <string name="ss_ifanr_hint">自动获取爱范儿最新文章与封面，仅选中此屏保时每 2 小时后台刷新；断网时继续播放缓存。</string>
+    <string name="iframe_loading">正在获取 ifanr 最新文章…</string>
+    <string name="iframe_unavailable">暂时无法获取文章或封面，正在等待重试…</string>
+    <string name="iframe_keys">← → 切换文章 · 确认键阅读</string>
+    <string name="iframe_confirm">再次摁下确认键打开文章</string>
+    <string name="article_loading">正在加载文章…</string>
+    <string name="article_keys">ifanr · 文章原文｜↑↓ 滚动 · 返回退出</string>
+    <string name="article_failed">文章加载失败 · 确认重试 · 返回退出</string>
+    <string name="article_unavailable">系统暂时无法显示文章 · 返回退出</string>
 </resources>

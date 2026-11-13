@@ -136,6 +136,7 @@ fun Screensaver(visible: Boolean, apps: List<AppEntry>, now: LocalDateTime, skip
                         AerialStart.start(context)
                     },
                 )
+                ScreensaverMode.Ifanr -> IfanrSaver(now, skips.steps)
                 ScreensaverMode.Photos -> PhotoSaver(now, skips.steps, remember { Wallpapers.screensaverPicture() })
                 ScreensaverMode.Clock, ScreensaverMode.System -> ClockSaver(apps, now)
                 ScreensaverMode.Videos -> if (videosFailed) PhotoSaver(now, skips.steps) else VideoSaver(skips.steps, leaving = !visible, onUnavailable = { videosFailed = true })
@@ -149,6 +150,28 @@ fun Screensaver(visible: Boolean, apps: List<AppEntry>, now: LocalDateTime, skip
  * AerialDream as the system screensaver) offers every key here first; keys not taken here wake.
  */
 class ScreensaverSkips {
+    private val articleConfirm = ArticleConfirm()
+    private var articleKeyDown = false
+    fun onArticleKey(event: KeyEvent, context: android.content.Context, launch: (android.content.Intent) -> Unit): Boolean {
+        if (Wallpapers.screensaver != ScreensaverMode.Ifanr || event.keyCode !in setOf(KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER)) return false
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            if (event.repeatCount == 0) articleKeyDown = true
+            return true
+        }
+        if (event.action != KeyEvent.ACTION_UP || !articleKeyDown) return true
+        articleKeyDown = false
+        if (event.isCanceled) return true
+        val article = app.orchard.tv.wallpaper.IfanrArticles.current ?: return true
+        if (!articleConfirm.press(article.link, app.orchard.tv.wallpaper.IfanrArticles.session, SystemClock.elapsedRealtime())) {
+            android.widget.Toast.makeText(context, app.orchard.tv.R.string.iframe_confirm, android.widget.Toast.LENGTH_SHORT).show()
+            return true
+        }
+        val intent = app.orchard.tv.wallpaper.ArticleReaderActivity.intent(context, article.link)
+        try { launch(intent) } catch (e: Exception) {
+            android.widget.Toast.makeText(context, app.orchard.tv.R.string.article_unavailable, android.widget.Toast.LENGTH_LONG).show()
+        }
+        return true
+    }
     private val flow = MutableSharedFlow<Int>(extraBufferCapacity = 8)
     val steps: SharedFlow<Int> get() = flow
 
@@ -160,7 +183,7 @@ class ScreensaverSkips {
             else -> return false
         }
         if (Wallpapers.screensaver == ScreensaverMode.Clock) return false
-        if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) flow.tryEmit(step)
+        if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) { articleConfirm.reset(); flow.tryEmit(step) }
         return true
     }
 }
@@ -325,6 +348,8 @@ private fun Labels(
     showTime: Boolean = true,
     /** A shade under the labels: over photos. The aerial films are left as they are, as on Home. */
     shade: Boolean = true,
+    captionLines: Int = 2,
+    captionWidth: androidx.compose.ui.unit.Dp = 620.dp,
 ) {
     // Fades in where Home's own clock has moved to, as the photos cover it.
     val time by animateFloatAsState(if (showTime) 1f else 0f, tween(2000), label = "time")
@@ -366,9 +391,9 @@ private fun Labels(
             label = "caption",
         ) { text ->
             BasicText(
-                text, maxLines = 2, overflow = TextOverflow.Ellipsis,
+                text, maxLines = captionLines, overflow = TextOverflow.Ellipsis,
                 style = Type.Title.copy(color = Color.White.copy(alpha = 0.92f)),
-                modifier = Modifier.widthIn(max = 620.dp),
+                modifier = Modifier.widthIn(max = captionWidth),
             )
         }
     }
@@ -691,19 +716,7 @@ private fun PhotoSaver(
     // Each photo fades in over the last, which stays whole beneath it (no dip to black mid-way).
     Dissolve(targetState = image, durationMs = 2000, easing = LinearEasing, label = "photo") { current ->
         if (current != null) {
-            // Ken Burns: a slow push in, alternating direction slide to slide.
-            val push = remember { Animatable(0f) }
-            LaunchedEffect(Unit) { if (!reduced) push.animateTo(1f, tween(20_000, easing = LinearEasing)) }
-            val dir = if (current.first.mod(2) == 0) 1f else -1f
-            Canvas(
-                Modifier.fillMaxSize().graphicsLayer {
-                    val s = 1.04f + 0.08f * push.value
-                    scaleX = s; scaleY = s
-                    translationX = dir * (push.value - 0.5f) * 40.dp.toPx()
-                },
-            ) {
-                drawImage(current.second, dstSize = IntSize(size.width.roundToInt(), size.height.roundToInt()), filterQuality = FilterQuality.Medium)
-            }
+            PhotoFrame(current.first, current.second, reduced)
         }
     }
     val wp = pool.getOrNull((image?.first ?: 0).mod(pool.size.coerceAtLeast(1)))
@@ -750,3 +763,71 @@ private fun ClockSaver(apps: List<AppEntry>, now: LocalDateTime) {
 }
 
 private data class Scene(val light: ImageBitmap?, val x: Float, val y: Float)
+
+@Composable
+private fun PhotoFrame(index: Int, bitmap: ImageBitmap, reduced: Boolean) {
+            // Ken Burns: a slow push in, alternating direction slide to slide.
+            val push = remember { Animatable(0f) }
+            LaunchedEffect(Unit) { if (!reduced) push.animateTo(1f, tween(20_000, easing = LinearEasing)) }
+            val dir = if (index.mod(2) == 0) 1f else -1f
+            Canvas(
+                Modifier.fillMaxSize().graphicsLayer {
+                    val s = 1.04f + 0.08f * push.value
+                    scaleX = s; scaleY = s
+                    translationX = dir * (push.value - 0.5f) * 40.dp.toPx()
+                },
+            ) {
+                drawImage(bitmap, dstSize = IntSize(size.width.roundToInt(), size.height.roundToInt()), filterQuality = FilterQuality.Medium)
+            }
+}
+
+/** The same photo dissolve and drift, with the article tied to the image that actually loaded. */
+@Composable
+private fun IfanrSaver(now: LocalDateTime, steps: SharedFlow<Int>) {
+    val context = LocalContext.current.applicationContext
+    val reduced = LocalReducedMotion.current
+    var articles by remember { mutableStateOf<List<app.orchard.tv.wallpaper.IfanrArticles.Article>>(emptyList()) }
+    var slide by remember { mutableIntStateOf(0) }
+    var ready by remember { mutableStateOf(false) }
+    var shown by remember { mutableStateOf<Triple<Int, app.orchard.tv.wallpaper.IfanrArticles.Article, ImageBitmap>?>(null) }
+    DisposableEffect(Unit) {
+        app.orchard.tv.wallpaper.IfanrArticles.session++
+        onDispose { app.orchard.tv.wallpaper.IfanrArticles.current = null }
+    }
+    LaunchedEffect(Unit) {
+        articles = withContext(Dispatchers.IO) { app.orchard.tv.wallpaper.IfanrArticles.cached(context) }
+        while (true) {
+            val fresh = app.orchard.tv.wallpaper.IfanrArticles.refresh(context)
+            if (fresh.isNotEmpty()) articles = fresh
+            ready = true
+            delay(app.orchard.tv.wallpaper.IfanrArticles.REFRESH_MS)
+        }
+    }
+    LaunchedEffect(articles, slide) {
+        if (articles.isEmpty()) return@LaunchedEffect
+        val article = articles[slide.mod(articles.size)]
+        val bmp = app.orchard.tv.wallpaper.IfanrArticles.picture(context, article)
+        if (bmp != null) {
+            shown = Triple(slide, article, bmp.asImageBitmap())
+            app.orchard.tv.wallpaper.IfanrArticles.current = article
+        }
+        delay(if (bmp == null) 3000 else 15_000)
+        slide++
+    }
+    LaunchedEffect(steps) { steps.collect { slide += it } }
+    Box(Modifier.fillMaxSize().background(Color(0xFF14243A))) {
+        Dissolve(targetState = shown, durationMs = 2000, easing = LinearEasing, label = "ifanr") { current ->
+            if (current != null) PhotoFrame(current.first, current.third, reduced)
+        }
+        Labels(
+            shown?.let { "ifanr · " + it.second.title }
+                ?: androidx.compose.ui.res.stringResource(if (ready) app.orchard.tv.R.string.iframe_unavailable else app.orchard.tv.R.string.iframe_loading),
+            now, captionLines = 4, captionWidth = 800.dp,
+        )
+        if (shown != null) BasicText(
+            androidx.compose.ui.res.stringResource(app.orchard.tv.R.string.iframe_keys),
+            style = Type.Body.copy(color = Color.White.copy(alpha = 0.75f)),
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 28.dp),
+        )
+    }
+}

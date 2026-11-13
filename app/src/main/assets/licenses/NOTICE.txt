@@ -1,0 +1,9 @@
+Identical Apache 2.0 license texts consolidated from:
+META-INF/androidx/annotation/annotation/LICENSE.txt
+META-INF/androidx/collection/collection-ktx/LICENSE.txt
+META-INF/androidx/collection/collection/LICENSE.txt
+META-INF/androidx/lifecycle/lifecycle-common/LICENSE.txt
+
+Aerial upstream: https://github.com/pengchujin/aerial-tv
+Copyright (c) 2026 pengchujin. See Aerial-MIT.txt.
+Dot font notices remain under assets/fonts/.

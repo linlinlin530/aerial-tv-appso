@@ -1,0 +1,6 @@
+Aerial round-dot customization
+Font: Dotted Songti Circle Regular 0.1, unmodified.
+Source: https://github.com/wixette/dotted-chinese-fonts
+Copyright and license: see LICENSE.txt (GNU GPL version 2).
+Derived upstream from WenQuanYi Bitmap Song.
+This is a Nothing-inspired visual treatment, not an official Nothing font.

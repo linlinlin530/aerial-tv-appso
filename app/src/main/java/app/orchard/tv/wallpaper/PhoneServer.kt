@@ -68,7 +68,43 @@ class PhoneServer private constructor(private val context: Context, private val 
             if (session.method == Method.POST && path != "/api/kids/unlock" && (Restricted.active || path.startsWith("/api/kids/")) &&
                 path != "/api/kids/start" && !pinOk(session.headers["x-aerial-pin"])
             ) return json(state().put("saved", false).put("kidsLocked", true))
+            if (path.startsWith("/api/config/") && AerialSettings.pinSet && !pinOk(session.headers["x-aerial-pin"]))
+                return json(JSONObject().put("saved", false).put("kidsLocked", true))
             when {
+                session.method == Method.GET && (path == "/api/config/export" || path == "/api/config/previous") -> {
+                    val data = if (path.endsWith("previous")) {
+                        val file = app.orchard.tv.settings.ConfigBackup.previous(context)
+                        if (!file.exists()) return text(Response.Status.NOT_FOUND, "No previous backup")
+                        file.readText()
+                    } else runBlocking(Dispatchers.Main) { app.orchard.tv.settings.ConfigBackup.export(context).toString(2) }
+                    text(Response.Status.OK, data).apply {
+                        addHeader("Content-Disposition", "attachment; filename=\"aerial-config.json\"")
+                        addHeader("Cache-Control", "no-store")
+                    }
+                }
+                session.method == Method.POST && path == "/api/config/import" -> {
+                    val size = session.headers["content-length"]?.toLongOrNull()
+                    if (size == null || size !in 1..(app.orchard.tv.settings.ConfigBackup.MAX_BYTES * 6L))
+                        return text(Response.Status.BAD_REQUEST, "Invalid backup size")
+                    val backup = form(session)["config"] ?: return text(Response.Status.BAD_REQUEST, "Missing configuration")
+                    try {
+                        runBlocking(Dispatchers.Main) { app.orchard.tv.settings.ConfigBackup.restore(context, backup) }
+                    } catch (e: Exception) {
+                        return json(JSONObject().put("saved", false).put("error", e.message ?: "Invalid backup"))
+                    }
+                    // Let the response reach the browser, then reload all process-level preference caches.
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        val launch = android.content.Intent(context, app.orchard.tv.MainActivity::class.java)
+                            .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        val pending = android.app.PendingIntent.getActivity(context, 9021, launch,
+                            android.app.PendingIntent.FLAG_CANCEL_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE)
+                        val alarm = context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+                        alarm.set(android.app.AlarmManager.RTC, System.currentTimeMillis() + 700, pending)
+                        android.os.Process.killProcess(android.os.Process.myPid())
+                    }, 1500)
+                    json(JSONObject().put("saved", true).put("restarting", true))
+                }
+                path == "/font.otf" -> newChunkedResponse(Response.Status.OK, "font/otf", context.assets.open("fonts/aerial_dots.otf"))
                 path == "/" -> newFixedLengthResponse(Response.Status.OK, "text/html; charset=utf-8", page())
                 session.method == Method.POST && path == "/api/kids/unlock" -> {
                     val ok = pinOk(form(session)["pin"])
@@ -237,6 +273,13 @@ class PhoneServer private constructor(private val context: Context, private val 
             .put("latestDaily", Wallpapers.LATEST_DAILY)
             .put("rotatePhotos", Wallpapers.ROTATE_PHOTOS)
             .put("screensaver", Wallpapers.screensaver.key)
+            .put("ifanrBackgroundEnabled", IfanrRefresh.enabled(context))
+            .put("ifanrLastBackgroundAt", context.getSharedPreferences("ifanr_refresh", Context.MODE_PRIVATE).getLong("last_job_at", 0))
+            .put("ifanrBackgroundResult", context.getSharedPreferences("ifanr_refresh", Context.MODE_PRIVATE).getString("last_result", ""))
+            .put("articleReaderStatus", ArticleReaderActivity.status)
+            .put("articleReaderScroll", ArticleReaderActivity.scrollPosition)
+            .put("ifanrStatus", IfanrArticles.status)
+            .put("ifanrArticle", IfanrArticles.current?.link ?: "")
             .put("screensaverFollows", Wallpapers.screensaverFollows)
             .put("videos", JSONArray().apply {
                 ScreensaverVideos.all(context).forEach { put(JSONObject().put("id", it.id).put("name", it.name)) }

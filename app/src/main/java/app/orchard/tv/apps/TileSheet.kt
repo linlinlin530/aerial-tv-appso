@@ -45,7 +45,7 @@ object TileSheet {
         val canvas = Canvas(sheet)
         canvas.drawColor(0xFF1C1C1E.toInt())
         val text = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = 0xFFEBEBF0.toInt(); textSize = 22f; textAlign = Paint.Align.CENTER; typeface = Typeface.DEFAULT
+            color = 0xFFEBEBF0.toInt(); textSize = 22f; textAlign = Paint.Align.CENTER; typeface = app.orchard.tv.ui.theme.DotFonts.native
         }
         val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
         tiles.forEachIndexed { i, (label, art) ->

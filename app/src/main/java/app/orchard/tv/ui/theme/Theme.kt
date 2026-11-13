@@ -1,18 +1,13 @@
 package app.orchard.tv.ui.theme
 
-import android.os.Build
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import app.orchard.tv.R
 
 /**
  * Pixels per dp of Aerial's 960×540 design canvas on this screen: 2 for a 1080p UI, 4 for a TV
@@ -55,39 +50,22 @@ object Motion {
 /** True when the TV's animator scale is 0 ("remove animations"). Motion collapses to fades. */
 val LocalReducedMotion = staticCompositionLocalOf { false }
 
-// Inter has an optical size axis. Text sizes get the 14pt master, display sizes the 32pt master,
-// the way SF Pro switches between Text and Display. Font variations need Android 8.0; before that
-// every weight would come out as Inter Regular, so those TVs use the system's Roboto instead.
-@OptIn(ExperimentalTextApi::class)
-private fun inter(opticalSize: Float) = if (Build.VERSION.SDK_INT < 26) FontFamily.SansSerif else FontFamily(
-    (1..9).map { i ->
-        val w = i * 100
-        Font(
-            R.font.inter,
-            FontWeight(w),
-            variationSettings = FontVariation.Settings(
-                FontVariation.weight(w),
-                FontVariation.Setting("opsz", opticalSize),
-            ),
-        )
-    },
-)
-
-val InterText = inter(14f)
-val InterDisplay = inter(32f)
+// Static round-dot outlines work on Android 5+ and include Latin and CJK glyphs.
+val InterText by lazy { FontFamily(DotFonts.native) }
+val InterDisplay get() = InterText
 
 object Type {
     val Clock = TextStyle(
-        fontFamily = InterDisplay, fontWeight = FontWeight.W700,
+        fontFamily = InterDisplay, fontWeight = FontWeight.Normal,
         fontSize = 104.sp, letterSpacing = (-0.04).em, color = Palette.Label,
     )
     /** Over and under the large clock: the date, and the weather. */
     val ClockDate = TextStyle(
-        fontFamily = InterDisplay, fontWeight = FontWeight.W600,
+        fontFamily = InterDisplay, fontWeight = FontWeight.Normal,
         fontSize = 19.sp, letterSpacing = (-0.005).em, color = Palette.Label,
     )
     val ClockDetail = TextStyle(
-        fontFamily = InterText, fontWeight = FontWeight.W600,
+        fontFamily = InterText, fontWeight = FontWeight.Normal,
         fontSize = 16.sp, color = Palette.Label,
     )
     /**
@@ -96,31 +74,31 @@ object Type {
      * text cut and open tracking. Size is set where used.
      */
     val SmallClock = TextStyle(
-        fontFamily = InterText, fontWeight = FontWeight.W600,
+        fontFamily = InterText, fontWeight = FontWeight.Normal,
         letterSpacing = 0.05.em, color = Palette.Label,
     )
     val LargeTitle = TextStyle(
-        fontFamily = InterDisplay, fontWeight = FontWeight.W600,
+        fontFamily = InterDisplay, fontWeight = FontWeight.Normal,
         fontSize = 26.sp, letterSpacing = (-0.015).em, color = Palette.Label,
     )
     val Title = TextStyle(
-        fontFamily = InterDisplay, fontWeight = FontWeight.W600,
+        fontFamily = InterDisplay, fontWeight = FontWeight.Normal,
         fontSize = 19.sp, letterSpacing = (-0.01).em, color = Palette.Label,
     )
     val Headline = TextStyle(
-        fontFamily = InterText, fontWeight = FontWeight.W600,
+        fontFamily = InterText, fontWeight = FontWeight.Normal,
         fontSize = 15.sp, letterSpacing = (-0.005).em, color = Palette.Label,
     )
     val Body = TextStyle(
-        fontFamily = InterText, fontWeight = FontWeight.W500,
+        fontFamily = InterText, fontWeight = FontWeight.Normal,
         fontSize = 14.sp, color = Palette.Label,
     )
     val Callout = TextStyle(
-        fontFamily = InterText, fontWeight = FontWeight.W500,
+        fontFamily = InterText, fontWeight = FontWeight.Normal,
         fontSize = 13.sp, color = Palette.SecondaryLabel,
     )
     val Caption = TextStyle(
-        fontFamily = InterText, fontWeight = FontWeight.W500,
+        fontFamily = InterText, fontWeight = FontWeight.Normal,
         fontSize = 11.sp, letterSpacing = 0.01.em, color = Palette.SecondaryLabel,
     )
 }

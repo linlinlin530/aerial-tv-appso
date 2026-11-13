@@ -73,6 +73,7 @@
     <!-- largeHeap: up to Android 7 bitmaps live on the Java heap, and LeTV X3-55 Pro (Android 5.0.1)
          ran out of it drawing Home (issue #328). -->
     <application
+        android:name=".ui.theme.DotFontApplication"
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:banner="@drawable/banner"
@@ -115,6 +116,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".wallpaper.ArticleReaderActivity" android:exported="false" android:screenOrientation="landscape" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.files"
@@ -134,6 +137,11 @@
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".wallpaper.IfanrRefreshJob"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name=".dream.AerialDream"

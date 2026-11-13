@@ -17,3 +17,12 @@ site/icons/
 
 # Wrangler state and the account cache (account id, e-mail).
 .wrangler/
+
+# APPSO private signing material and local reports
+*.jks
+*.keystore
+.env
+.env.*
+!*.example
+outputs/
+work/

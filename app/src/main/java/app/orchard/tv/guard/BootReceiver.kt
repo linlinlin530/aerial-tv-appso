@@ -39,6 +39,7 @@ class BootReceiver : BroadcastReceiver() {
     private fun onBoot(context: Context, action: String) {
         GuardSetup.ensureEnabled(context)
         if (action == Intent.ACTION_LOCKED_BOOT_COMPLETED) return
+        app.orchard.tv.wallpaper.IfanrRefresh.initialize(context)
         GuardSetup.rescanIfMissing(context)
         // Also when Aerial is the default Home: some firmwares start their own launcher at boot
         // regardless (Skyworth/Coolita 8R145, issue #43).

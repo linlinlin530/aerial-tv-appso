@@ -316,4 +316,14 @@
     <string name="kids_blocked">«%s» тут недоступний</string>
     <string name="kids_warn">Лишилося %d хв</string>
     <string name="kids_warn_break">Перерва за %d хв</string>
+    <string name="ss_ifanr">ifanr</string>
+    <string name="ss_ifanr_hint">Нові статті ifanr з обкладинками. Фонове оновлення кожні 2 години, лише поки вибрано цю заставку, кеш доступний без мережі.</string>
+    <string name="iframe_loading">Завантаження статей ifanr…</string>
+    <string name="iframe_unavailable">Статті або обкладинки недоступні. Очікування…</string>
+    <string name="iframe_keys">← → Статті · OK: читати</string>
+    <string name="iframe_confirm">Натисніть OK ще раз протягом 3 секунд</string>
+    <string name="article_loading">Завантаження статті…</string>
+    <string name="article_keys">ifanr · Оригінал | ↑↓ Прокрутка · Назад Вихід</string>
+    <string name="article_failed">Не вдалося завантажити · OK Повтор · Назад Вихід</string>
+    <string name="article_unavailable">Система не може показати статтю · Назад Вихід</string>
 </resources>

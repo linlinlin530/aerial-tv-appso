@@ -1,0 +1,5 @@
+Source: https://github.com/wixette/dotted-chinese-fonts
+Commit: ae60462b56d670a84f96852ab6aaef4dad7c43d5
+Vendored unchanged: LICENSE, README.md, converter/, release/.
+The APK contains the unmodified DottedSongtiCircleRegular.otf from release/v_0_1/dotted_songti_v_0_1.zip, renamed aerial_dots.otf.
+The editable OpenType font and upstream conversion scripts are included. The original upstream release process includes FontForge cleanup; a byte-identical regeneration from bitmap input is not claimed.

@@ -644,7 +644,7 @@ fun ShelfClock(
     val shadow = Shadow(Color.Black.copy(alpha = 0.28f), Offset(0f, 2f), blurRadius = 18f)
     // The Chinese calendar's date and the weather's details in white too, only lighter in weight:
     // dimmed, they faded into an unshaded film (the owner, Xiaomi MiTV-MFTR0).
-    val second = SpanStyle(fontWeight = FontWeight.W500)
+    val second = SpanStyle(fontWeight = FontWeight.Normal)
     // Gone in the first 400 ms, while the time has barely set off (its 2 s ease-in-out). Fading
     // along its progress (1.52), they were still there as the time rose through the date, and over
     // a moving film, at 8-10 frames a second on Xiaomi MiTV-MFTR0, they read as cut away in steps.
@@ -811,7 +811,7 @@ private fun glyphFor(w: WeatherNow): Glyph = when (w.kind) {
 fun VpnBadge(color: Color, modifier: Modifier = Modifier, fontSize: TextUnit = 10.sp) {
     BasicText(
         stringResource(R.string.net_vpn),
-        style = Type.Caption.copy(color = color, fontSize = fontSize, fontWeight = FontWeight.W700, letterSpacing = 0.04.em),
+        style = Type.Caption.copy(color = color, fontSize = fontSize, fontWeight = FontWeight.Normal, letterSpacing = 0.04.em),
         modifier = modifier
             .smoothBorder(1.2.dp, color, 4.dp)
             .padding(horizontal = 4.dp, vertical = 1.dp),

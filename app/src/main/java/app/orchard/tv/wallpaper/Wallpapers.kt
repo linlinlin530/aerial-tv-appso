@@ -49,7 +49,7 @@ data class Wallpaper(
 
 /** System: none of Aerial's; the TV's own screensaver starts as the firmware has it (SystemScreensaver). */
 enum class ScreensaverMode(val key: String) {
-    Aerial("aerial"), Photos("photos"), Clock("clock"), Videos("videos"), System("system");
+    Aerial("aerial"), Photos("photos"), Ifanr("ifanr"), Clock("clock"), Videos("videos"), System("system");
 
     companion object {
         fun of(key: String?) = entries.firstOrNull { it.key == key } ?: Aerial
@@ -200,6 +200,7 @@ object Wallpapers {
     fun init(context: Context) {
         if (started) return
         started = true
+        IfanrRefresh.initialize(context)
         app = context.applicationContext
         measure(context).let { (w, h) -> screenW = w; screenH = h }
         selectedId = (prefs.getString("selected", LATEST_DAILY) ?: LATEST_DAILY)

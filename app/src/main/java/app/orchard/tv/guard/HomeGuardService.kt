@@ -1935,6 +1935,7 @@ class HomeGuardService : AccessibilityService() {
         val dp = resources.displayMetrics.widthPixels / 960f
         val view = android.widget.TextView(this).apply {
             this.text = text
+            typeface = app.orchard.tv.ui.theme.DotFonts.native
             setTextColor(android.graphics.Color.WHITE)
             setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, 17 * dp)
             setPadding((22 * dp).toInt(), (12 * dp).toInt(), (22 * dp).toInt(), (12 * dp).toInt())

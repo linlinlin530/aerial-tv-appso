@@ -19,8 +19,8 @@ android {
         // Android 5.0. Compose 1.10 and later need 6.0, so the Compose BOM below stays on 1.9.
         minSdk = 21
         targetSdk = 34
-        versionCode = 137
-        versionName = "1.96"
+        versionCode = 142
+        versionName = "1.96-appso"
         // `./gradlew -Pdiag ...`: a build for one reporter's TV whose logcat shows no app lines;
         // see system/DiagLog.kt.
         val diag = project.hasProperty("diag")
@@ -87,6 +87,14 @@ android {
     }
     packaging {
         resources.excludes += setOf("/META-INF/{AL2.0,LGPL2.1}", "DebugProbesKt.bin", "kotlin-tooling-metadata.json")
+        // Keep one license copy in assets/licenses; omit unused dependency version markers.
+        resources.excludes += setOf(
+            "META-INF/*.version",
+            "META-INF/androidx/annotation/annotation/LICENSE.txt",
+            "META-INF/androidx/collection/collection-ktx/LICENSE.txt",
+            "META-INF/androidx/collection/collection/LICENSE.txt",
+            "META-INF/androidx/lifecycle/lifecycle-common/LICENSE.txt",
+        )
     }
 }
 

@@ -210,7 +210,7 @@ object TileArtFactory {
             restore()
             val title = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = 0xFFFFFFFF.toInt(); textSize = H * 0.15f; textAlign = Paint.Align.CENTER
-                typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+                typeface = app.orchard.tv.ui.theme.DotFonts.native
             }
             // A name typed on the phone can be long: smaller type first, then cut short.
             var shown: String = label
@@ -218,7 +218,7 @@ object TileArtFactory {
             while (title.measureText(shown) > W * 0.88f && shown.length > 1) shown = shown.dropLast(2) + "…"
             drawText(shown, W / 2f, H * (if (two) 0.68f else 0.76f), title)
             if (sub != null) {
-                val small = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xCCFFFFFF.toInt(); textSize = H * 0.11f; textAlign = Paint.Align.CENTER }
+                val small = Paint(Paint.ANTI_ALIAS_FLAG).apply { typeface = app.orchard.tv.ui.theme.DotFonts.native; color = 0xCCFFFFFF.toInt(); textSize = H * 0.11f; textAlign = Paint.Align.CENTER }
                 drawText(sub, W / 2f, H * 0.85f, small)
             }
         }

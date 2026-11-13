@@ -85,6 +85,9 @@ class AerialDream : DreamService(), LifecycleOwner, SavedStateRegistryOwner {
     private val keysDown = HashSet<Int>()
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (skips.onArticleKey(event, this) { intent ->
+            if (!app.orchard.tv.settings.Restricted.active) { startActivity(intent); finish() }
+        }) return true
         if (skips.onKey(event)) return true
         // A lift whose press never came here ends the dream too: Coocaa C10's hotkey service keeps
         // the press of some keys and lets only the lift through (issue #915; see MainActivity).
