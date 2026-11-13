@@ -17,6 +17,18 @@
 
 以上以本分支基于的 Aerial 1.96 为比较对象。配置备份不包含上传的媒体文件、已安装应用或系统权限。
 
+## 界面预览
+
+以下为定制版开发期间的电视实机截图，部分提示文字可能与当前版本略有不同。点击图片可查看大图。
+
+| 点阵字体主页 | 更多应用 |
+| --- | --- |
+| [![点阵字体主页](docs/screenshots/home.png)](docs/screenshots/home.png) | [![更多应用页面](docs/screenshots/apps.png)](docs/screenshots/apps.png) |
+| **ifanr 封面与标题轮播** | **打开原文前的二次确认** |
+| [![ifanr 文章屏保](docs/screenshots/ifanr.png)](docs/screenshots/ifanr.png) | [![再次按确认键打开文章的提示](docs/screenshots/confirm.png)](docs/screenshots/confirm.png) |
+
+屏保约每 15 秒切换文章；按确认键后，需在 3 秒内再次确认才会打开原文。截图中的文章封面、标题和应用标识仅用于展示界面，版权归各权利人。
+
 ## 安装
 
 适用于 Android 5.0+，本次提供 **standard Release** 包。需要 guard 变体的固件不在本次发布范围内。
